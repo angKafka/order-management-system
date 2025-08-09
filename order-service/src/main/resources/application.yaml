@@ -9,18 +9,22 @@ spring:
     jcache:
       config: classpath:ehcache.xml
   datasource:
-    url: jdbc:postgresql://localhost:5436/postgres
+    url: jdbc:postgresql://localhost:5432/oms
     username: postgres
-    password: password
+    password: postgres
   jpa:
     hibernate:
-      ddl-auto: update
+      ddl-auto: create-drop
     show-sql: true
 
   kafka:
     bootstrap-servers: localhost:9092
     consumer:
       group-id: order-service-group
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.apache.kafka.common.serialization.StringDeserializer
     producer:
       key-serializer: org.apache.kafka.common.serialization.StringSerializer
       value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
+jwt:
+  secret: a103620fec951f287fe3147a63be54f0288553134d1b8ef51188da3ddad629d6

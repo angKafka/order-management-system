@@ -4,8 +4,8 @@ import lombok.RequiredArgsConstructor;
 import org.rdutta.commonlibrary.dto.InventoryResponseDTO;
 import org.rdutta.commonlibrary.dto.ProductRequestDTO;
 import org.rdutta.inventoryservice.service.InventoryService;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -24,6 +24,7 @@ public class ProductController {
      * @param orderId   the order ID (to correlate with response)
      * @return InventoryResponseDTO with availability status
      */
+    @PreAuthorize("hasAnyAuthority('ROLE_USER', 'ROLE_ADMIN')")
     @GetMapping("/{productId}")
     public ResponseEntity<InventoryResponseDTO> checkInventory(@PathVariable Long productId,
                                          @RequestParam int quantity,
@@ -36,6 +37,7 @@ public class ProductController {
      *
      * @param products products json data
      */
+    @PreAuthorize("hasAnyAuthority('ROLE_USER', 'ROLE_ADMIN')")
     @PostMapping("/import")
     public void importProducts(@RequestBody List<ProductRequestDTO> products) {
         inventoryService.bulkImport(products);

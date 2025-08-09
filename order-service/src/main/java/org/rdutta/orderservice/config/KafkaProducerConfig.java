@@ -8,6 +8,7 @@ import org.apache.kafka.common.serialization.StringSerializer;
 import org.rdutta.commonlibrary.constants.KafkaTopics;
 import org.rdutta.commonlibrary.dto.OrderResponseDTO;
 import org.rdutta.commonlibrary.dto.OrderValidationRequestDTO;
+import org.rdutta.commonlibrary.dto.OrderValidationWithUserContextDTO;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.kafka.config.ConcurrentKafkaListenerContainerFactory;
@@ -23,7 +24,7 @@ import java.util.Map;
 public class KafkaProducerConfig {
 
     @Bean
-    public ProducerFactory<String, OrderValidationRequestDTO> producerFactory() {
+    public ProducerFactory<String, OrderValidationWithUserContextDTO> producerFactory() {
         Map<String, Object> config = new HashMap<>();
         config.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, "localhost:9092");
         config.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class);
@@ -33,7 +34,7 @@ public class KafkaProducerConfig {
     }
 
     @Bean
-    public KafkaTemplate<String, OrderValidationRequestDTO> kafkaTemplate() {
+    public KafkaTemplate<String, OrderValidationWithUserContextDTO> kafkaTemplate() {
         return new KafkaTemplate<>(producerFactory());
     }
 

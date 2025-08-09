@@ -4,6 +4,7 @@ import org.rdutta.commonlibrary.dto.OrderRequestDTO;
 import org.rdutta.orderservice.service.OrderServiceDAO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -15,6 +16,7 @@ public class OrderController {
     @Autowired
     private OrderServiceDAO serviceDAO;
 
+    @PreAuthorize("hasAnyAuthority('ROLE_ADMIN', 'ROLE_USER','ROLE_DEVELOPER')")
     @PostMapping
     public ResponseEntity<String> orderPlace(@RequestBody OrderRequestDTO dto){
         serviceDAO.placeOrder(dto);

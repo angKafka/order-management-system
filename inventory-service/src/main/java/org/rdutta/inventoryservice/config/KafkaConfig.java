@@ -5,7 +5,7 @@ import org.apache.kafka.clients.producer.ProducerConfig;
 import org.apache.kafka.common.serialization.StringDeserializer;
 import org.apache.kafka.common.serialization.StringSerializer;
 import org.rdutta.commonlibrary.dto.OrderResponseDTO;
-import org.rdutta.commonlibrary.dto.OrderValidationRequestDTO;
+import org.rdutta.commonlibrary.dto.OrderValidationWithUserContextDTO;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.kafka.annotation.EnableKafka;
@@ -21,7 +21,7 @@ import java.util.Map;
 @EnableKafka
 public class KafkaConfig {
 
-    // ✅ Producer Factory for OrderResponseDTO
+    // ✅ Producer for sending responses
     @Bean
     public ProducerFactory<String, OrderResponseDTO> producerFactory() {
         Map<String, Object> config = new HashMap<>();
@@ -31,17 +31,17 @@ public class KafkaConfig {
         return new DefaultKafkaProducerFactory<>(config);
     }
 
-    // ✅ Kafka Template for sending messages
     @Bean
     public KafkaTemplate<String, OrderResponseDTO> kafkaTemplate() {
         return new KafkaTemplate<>(producerFactory());
     }
 
-    // ✅ Consumer Factory for receiving OrderRequestDTO
+    // ✅ Consumer for receiving OrderValidationWithUserContextDTO
     @Bean
-    public ConsumerFactory<String, OrderValidationRequestDTO> consumerFactory() {
-        JsonDeserializer<OrderValidationRequestDTO> deserializer = new JsonDeserializer<>(OrderValidationRequestDTO.class);
-        deserializer.addTrustedPackages("*");
+    public ConsumerFactory<String, OrderValidationWithUserContextDTO> consumerFactory() {
+        JsonDeserializer<OrderValidationWithUserContextDTO> deserializer =
+                new JsonDeserializer<>(OrderValidationWithUserContextDTO.class);
+        deserializer.addTrustedPackages("org.rdutta.commonlibrary.dto");
 
         Map<String, Object> config = new HashMap<>();
         config.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, "localhost:9092");
@@ -52,10 +52,9 @@ public class KafkaConfig {
         return new DefaultKafkaConsumerFactory<>(config, new StringDeserializer(), deserializer);
     }
 
-    // ✅ Kafka Listener container factory
     @Bean
-    public ConcurrentKafkaListenerContainerFactory<String, OrderValidationRequestDTO> kafkaListenerContainerFactory() {
-        ConcurrentKafkaListenerContainerFactory<String, OrderValidationRequestDTO> factory =
+    public ConcurrentKafkaListenerContainerFactory<String, OrderValidationWithUserContextDTO> kafkaListenerContainerFactory() {
+        ConcurrentKafkaListenerContainerFactory<String, OrderValidationWithUserContextDTO> factory =
                 new ConcurrentKafkaListenerContainerFactory<>();
         factory.setConsumerFactory(consumerFactory());
         return factory;
