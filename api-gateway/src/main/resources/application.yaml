@@ -1,0 +1,38 @@
+spring:
+  application:
+    name: api-gateway
+  cloud:
+    gateway:
+      routes:
+        order-health-route:
+          uri: lb://order-service
+          predicates:
+            - Path=/actuator/order-service/health
+          filters:
+            - RewritePath=/actuator/order-service/health, /actuator/health
+
+        inventory-health-route:
+          uri: lb://inventory-service
+          predicates:
+            - Path=/actuator/inventory-service/health
+          filters:
+            - RewritePath=/actuator/inventory-service/health, /actuator/health
+
+        auth-health-route:
+          uri: lb://auth-service
+          predicates:
+            - Path=/actuator/auth-service/health
+          filters:
+            - RewritePath=/actuator/auth-service/health, /actuator/health
+jwt:
+  secret: a103620fec951f287fe3147a63be54f0288553134d1b8ef51188da3ddad629d6
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info # you can add more endpoints as needed
+  endpoint:
+    health:
+      show-details: always  # to see detailed info
+server:
+  port: 8085
