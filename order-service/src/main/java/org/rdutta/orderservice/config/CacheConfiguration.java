@@ -2,10 +2,11 @@ package org.rdutta.orderservice.config;
 
 import org.ehcache.Cache;
 import org.ehcache.config.builders.*;
-import org.ehcache.config.units.EntryUnit;
 import org.rdutta.commonlibrary.util.OrderValidationStatus;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+
+import java.time.Duration;
 
 @Configuration
 public class CacheConfiguration {
@@ -16,15 +17,14 @@ public class CacheConfiguration {
                 CacheConfigurationBuilder.newCacheConfigurationBuilder(
                                 String.class,
                                 OrderValidationStatus.class,
-                                ResourcePoolsBuilder.newResourcePoolsBuilder()
-                                        .heap(100, EntryUnit.ENTRIES)
-                        ).withExpiry(ExpiryPolicyBuilder.timeToLiveExpiration(java.time.Duration.ofMinutes(30)))
+                                ResourcePoolsBuilder.heap(100)
+                        ).withExpiry(ExpiryPolicyBuilder.timeToLiveExpiration(Duration.ofMinutes(30)))
                         .build();
 
-        org.ehcache.CacheManager ehCacheManager = CacheManagerBuilder.newCacheManagerBuilder()
+        org.ehcache.CacheManager cacheManager = CacheManagerBuilder.newCacheManagerBuilder()
                 .withCache("orderStatusCache", cacheConfig)
                 .build(true);
 
-        return ehCacheManager.getCache("orderStatusCache", String.class, OrderValidationStatus.class);
+        return cacheManager.getCache("orderStatusCache", String.class, OrderValidationStatus.class);
     }
 }
