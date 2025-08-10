@@ -2,8 +2,13 @@ FROM eclipse-temurin:17-jdk-jammy
 
 WORKDIR /app
 
+# Copy your Spring Boot jar
 COPY target/order-service-0.0.1-SNAPSHOT.jar app.jar
 
-EXPOSE 8081
+# Copy New Relic agent files into the image
+COPY newrelic/ /usr/local/newrelic/
+RUN chmod 755 /usr/local/newrelic/newrelic.jar
 
-ENTRYPOINT ["java", "-jar", "app.jar"]
+EXPOSE 8081 18003
+
+ENTRYPOINT ["java", "-javaagent:/usr/local/newrelic/newrelic.jar", "-Dnewrelic.config.file=/usr/local/newrelic/newrelic.yml", "-jar", "app.jar"]

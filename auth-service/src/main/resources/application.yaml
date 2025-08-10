@@ -1,11 +1,10 @@
 spring:
   application:
     name: auth-service
-
   datasource:
-    url: jdbc:postgresql://localhost:5432/oms
-    username: postgres
-    password: postgres
+    url: ${SPRING_DATASOURCE_URL:jdbc:postgresql://postgres:5432/oms}
+    username: ${SPRING_DATASOURCE_USERNAME:postgres}
+    password: ${SPRING_DATASOURCE_PASSWORD:postgres}
     driver-class-name: org.postgresql.Driver
 
   jpa:
@@ -18,3 +17,17 @@ spring:
     database-platform: org.hibernate.dialect.PostgreSQLDialect
 server:
   port: 8084
+eureka:
+  client:
+    register-with-eureka: true
+    fetch-registry: true
+    serviceUrl:
+      defaultZone: ${EUREKA_CLIENT_SERVICEURL_DEFAULTZONE:http://eureka-server:8761/eureka/}
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info # you can add more endpoints as needed
+  endpoint:
+    health:
+      show-details: always  # to see detailed info
